@@ -1,6 +1,10 @@
 const hive = require('hive-driver');
 const express = require ('express');
 const bodyParser = require ('body-parser');
+const Ably = require('ably');
+let ably = new Ably.Realtime('jzdf0A.ouBMcw:J5th_O6E1nt5uCmwyn7pIIUzvgGuLStD1Gvs85FyOlM');
+let channel = ably.channels.get('[product:ably-coindesk/crypto-pricing]btc:usd');
+
 const PORT = process.env.PORT || 3050;
 const app = express();
 app.use(bodyParser.json());
@@ -8,11 +12,30 @@ const { TCLIService, TCLIService_types } = hive.thrift;
 const client = new hive.HiveClient(
     TCLIService,
     TCLIService_types
-);
+); 
 const utils = new hive.HiveUtils(
     TCLIService_types
 );
 
+
+async function actual() {
+    var result= 'hola';
+    console.log("entre");
+    var i = 0; 
+    await channel.subscribe(function(message) {
+
+        result =  message.data;
+        console.log("listo");
+        i = 1 
+        channel.unsubscribe();
+    });
+
+    while (i == 0){
+        
+    }
+    console.log("sali");
+    return result;
+}
 async function hola() {
 
     return client.connect(
@@ -51,6 +74,7 @@ async function hola() {
 app.get('/prom', async (req,res) => {
 /*     const result =  client.connect();
     console.log("hola:",result); */
+    console.log('hola',await actual());
     return res.status(200) .json( await hola());
  })
 app.listen(PORT, () => {
