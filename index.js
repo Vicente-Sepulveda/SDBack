@@ -22,7 +22,7 @@ function sleep(ms) {
   }
 
 async function actual() {
-    var result= 'hola';
+    var result= 0 ;
     await channel.subscribe( function(message) {
 
         result =  message.data;
@@ -67,9 +67,10 @@ async function hola() {
 }
 
 app.get('/prom', async (req,res) => {
-    console.log(await actual());
-    
-    return res.status(200) .json( await hola());
+    var prom = await hola();
+    var precio = await actual();
+    var resultado = [prom[0]['_c0'], parseFloat(precio)];
+    return res.status(200) .json( resultado);
  })
 app.listen(PORT, () => {
     console.log("Servidor corriendo en el puerto", PORT )
