@@ -17,23 +17,18 @@ const utils = new hive.HiveUtils(
     TCLIService_types
 );
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
 async function actual() {
     var result= 'hola';
-    console.log("entre");
-    var i = 0; 
-    await channel.subscribe(function(message) {
+    await channel.subscribe( function(message) {
 
         result =  message.data;
-        console.log("listo");
-        i = 1 
         channel.unsubscribe();
     });
-
-    while (i == 0){
-        
-    }
-    console.log("sali");
+    await sleep(4000);
     return result;
 }
 async function hola() {
@@ -72,9 +67,8 @@ async function hola() {
 }
 
 app.get('/prom', async (req,res) => {
-/*     const result =  client.connect();
-    console.log("hola:",result); */
-    console.log('hola',await actual());
+    console.log(await actual());
+    
     return res.status(200) .json( await hola());
  })
 app.listen(PORT, () => {
